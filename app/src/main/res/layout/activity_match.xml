@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:context="hu.spykeh.darts.thedarts.view.CricketMatchActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout">
+
+        <TextView
+            android:id="@+id/gameModeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Game Mode Text" />
+
+        <TextView
+            android:id="@+id/roundNumberText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Round 1/20" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="100dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout2">
+        <ImageView
+            android:id="@+id/scoreBoard_red"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/cricket_scoreboard"
+            />
+        <ImageView
+            android:id="@+id/blank"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            />
+
+        <ImageView
+            android:id="@+id/scoreBoard_blue"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/cricket_scoreboard" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/scoreBoard"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp"
+        android:layout_alignTop="@+id/linearLayout2"
+        android:layout_alignStart="@+id/linearLayout2">
+        <ListView
+            android:id="@+id/sectionList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="94dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/playerBoard">
+
+            <ImageView
+                android:id="@+id/playerBoard_red"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/playerboard_red" />
+
+            <ImageView
+                android:id="@+id/playerBoard_blue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/playerboard_blue" />
+
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/text_red_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignTop="@id/playerBoard"
+        android:layout_alignBottom="@id/playerBoard"
+        android:layout_alignLeft="@id/playerBoard"
+        android:layout_alignRight="@id/playerBoard"
+        android:layout_marginRight="80dp"
+        android:ems="10"
+        android:text="200"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/text_blue_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignTop="@id/playerBoard"
+        android:layout_alignBottom="@id/playerBoard"
+        android:layout_alignLeft="@id/playerBoard"
+        android:layout_alignRight="@id/playerBoard"
+        android:layout_marginLeft="80dp"
+        android:ems="10"
+        android:text="200"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:id="@+id/playerBoard_names"
+        android:paddingTop="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <ListView
+            android:id="@+id/playerList_team1"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            android:id="@+id/playerList_team2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/shotHistory_red"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"
+        android:layout_toLeftOf="@+id/scoreBoard"
+        android:layout_alignParentTop="true" />
+
+    <ListView
+        android:id="@+id/shotHistory_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_toRightOf="@+id/scoreBoard"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentTop="true" />
+
+
+</RelativeLayout>

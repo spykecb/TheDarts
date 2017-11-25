@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="*"
+    android:gravity="center"
+    tools:context=".view.MainActivity">
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/newGameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:onClick="onNewGameButtonClick"
+            android:textSize="30dp"
+            android:text="New Game" />
+    </TableRow>
+    <!--
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/statButton"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:onClick="onStatisticsButtonClick"
+            android:textSize="30dp"
+            android:text="Statistics" />
+    </TableRow>
+    -->
+
+
+</TableLayout>
