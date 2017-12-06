@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         for(Player p : db.getAllPlayers()){
             for(Match m : db.getMatchesOfPlayer(p.getId())){
                 if(m instanceof CricketMatch){
-                    Log.d("myTag", "Match played by " + p.getName() + " "+  ((CricketMatch)m).getPlayerMPR(p));
+                    Log.d("myTag", "Match played by " + p.getName() + " "+  p.getMpr());
                 }else{
                     Log.d("myTag", "Match played by " + p.getName());
                 }

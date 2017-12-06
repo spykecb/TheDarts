@@ -186,6 +186,7 @@ public class CricketMatch extends Match {
         for(int i = 0; i <this.scoreBoard.size() ; i++){
             this.scoreBoard.get(i).setCurRoundThrowCount(0);
         }
+        updatePlayerMPR(shot.getPlayer());
         addSbToSbHistory(++shotNum, scoreBoard);
     }
 
@@ -211,7 +212,7 @@ public class CricketMatch extends Match {
         }
     }
 
-    public float getPlayerMPR(Player p){
+    public void updatePlayerMPR(Player p){
         int marks = 0;
         int q = 0;
         for(Shot s : shots){
@@ -221,9 +222,9 @@ public class CricketMatch extends Match {
             }
         }
         if(q > 0)
-            return (float)marks / (float)q;
+            p.setMpr((float)marks / (float)q);
         else
-            return 0;
+            p.setMpr(0);
     }
 
     public Player getPlayerTothrow() {

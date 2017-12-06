@@ -47,7 +47,7 @@ public class PlayerBoardAdapter extends ArrayAdapter<Player> {
             text.setTypeface(text.getTypeface(), Typeface.BOLD_ITALIC);
             text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         }
-        text.setText(player.getName());
+        text.setText(player.getName() + "(" + String.format("%.2f", player.getMpr()) + ")");
 
         return pView;
     }

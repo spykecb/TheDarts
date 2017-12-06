@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class Player implements Serializable{
     int id;
     private String name;
+    private float mpr;
 
     public Player(String name){
         this.name = name;
@@ -29,5 +30,13 @@ public class Player implements Serializable{
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public float getMpr() {
+        return mpr;
+    }
+
+    public void setMpr(float mpr) {
+        this.mpr = mpr;
     }
 }

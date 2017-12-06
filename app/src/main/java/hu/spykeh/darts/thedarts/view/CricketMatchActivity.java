@@ -110,10 +110,10 @@ public class CricketMatchActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         int res_id = item.getItemId();
         if(res_id == R.id.nextRoundButton){
-            if(currentRoundThrows.size() > 0) {
-                Shot shot = new Shot(new ArrayList<>(currentRoundThrows), match.getRoundNumber());
-                match.addShot(shot);
-            }
+            Shot shot = new Shot(new ArrayList<>(currentRoundThrows), match.getRoundNumber());
+            shot.setPlayer(match.getPlayerTothrow());
+            match.addShot(shot);
+
             match.pickNextPlayerToThrow();
             Toast.makeText(this, match.getPlayerTothrow().getName() + " to throw!", Toast.LENGTH_SHORT).show();
             currentRoundThrows.clear();
