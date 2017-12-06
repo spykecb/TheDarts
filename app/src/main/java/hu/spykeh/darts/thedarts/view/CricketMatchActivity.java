@@ -93,7 +93,7 @@ public class CricketMatchActivity extends AppCompatActivity {
         Throw _throw = new Throw(playerToThrow, section);
         getMatch().hitSection(section);
 
-        updateViews();
+        updateMarkViews();
         if(currentRoundThrows.size() < 9) {
             currentRoundThrows.add(_throw);
         }
@@ -113,6 +113,8 @@ public class CricketMatchActivity extends AppCompatActivity {
             Shot shot = new Shot(new ArrayList<>(currentRoundThrows), match.getRoundNumber());
             shot.setPlayer(match.getPlayerTothrow());
             match.addShot(shot);
+            scrollListViewToBottom(shotHistoryR);
+            scrollListViewToBottom(shotHistoryB);
 
             match.pickNextPlayerToThrow();
             Toast.makeText(this, match.getPlayerTothrow().getName() + " to throw!", Toast.LENGTH_SHORT).show();
@@ -140,12 +142,17 @@ public class CricketMatchActivity extends AppCompatActivity {
         return true;
     }
 
-    private void updateViews(){
-
+    private void updateMarkViews(){
         redScoreText.setText("" + getMatch().getTeamScore(Team.TeamColor.RED));
         blueScoreText.setText("" + getMatch().getTeamScore(Team.TeamColor.BLUE));
-        roundNumberText.setText("Round "+ (match.getRoundNumber() + 1) + "/" + ((CricketMatchSettings)getMatch().getSettings()).getMaxRound());
         sections.setAdapter(new CricketSectionAdapter(this, getMatch().getScoreBoard()));
+    }
+
+    private void updateViews(){
+        updateMarkViews();
+
+        roundNumberText.setText("Round "+ (match.getRoundNumber() + 1) + "/" + ((CricketMatchSettings)getMatch().getSettings()).getMaxRound());
+
         team1Shots = getMatch().getShotsOfTeam(Team.TeamColor.RED);
         team2Shots = getMatch().getShotsOfTeam(Team.TeamColor.BLUE);
         shotHistoryR.setAdapter(new ShotAdapter(this, team1Shots, Team.TeamColor.RED));
@@ -161,6 +168,29 @@ public class CricketMatchActivity extends AppCompatActivity {
             scoreBoardRed.setAlpha(0.4f);
             scoreBoardBlue.setAlpha(1.0f);
         }
+    }
+
+    private void scrollListViewToBottom(ListView lv) {
+        final ListView lv_ = lv;
+        lv_.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                lv_.setSelection(lv_.getAdapter().getCount() - 1);
+            }
+        });
+    }
+
+    private void scrollListViewToPos(ListView lv, int pos) {
+        final ListView lv_ = lv;
+        final int pos_ = pos;
+        lv_.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                lv_.setSelection(pos_);
+            }
+        });
     }
 
     public CricketMatch getMatch() {

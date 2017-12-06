@@ -38,7 +38,7 @@ public class ShotAdapter extends ArrayAdapter<Shot>{
         Shot shot = getItem(position);
         TextView rNum = (TextView) view.findViewById(R.id.shot_roundNumber_text);
         TextView hits = (TextView) view.findViewById(R.id.shot_hits_text);
-        rNum.setText("R" + (shot.getRoundNumber() + 1));
+        rNum.setText("R" + (shot.getRoundNumber() + 1) + " " + shot.getPlayer().getName().substring(0,2).toUpperCase());
         hits.setText(shot.toString());
         if(color == Team.TeamColor.RED){
             rNum.setTextColor(Color.parseColor("#C4030D"));
