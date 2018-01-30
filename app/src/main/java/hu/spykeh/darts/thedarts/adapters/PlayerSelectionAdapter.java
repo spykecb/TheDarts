@@ -2,10 +2,8 @@ package hu.spykeh.darts.thedarts.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +14,7 @@ import java.util.ArrayList;
 
 import hu.spykeh.darts.thedarts.db.DartsDBHelper;
 import hu.spykeh.darts.thedarts.model.Player;
+import hu.spykeh.darts.thedarts.view.ProfileActivity;
 
 /**
  * Created by spykeh on 2017. 10. 22..
@@ -61,15 +60,21 @@ public class PlayerSelectionAdapter extends ArrayAdapter<Player> {
             @Override
             public boolean onLongClick(View v) {
                 final int id = player.getId();
-                CharSequence[] choices = new CharSequence[]{"Delete"};
+                CharSequence[] choices = new CharSequence[]{"Delete" , "Profile"};
                 AlertDialog.Builder b = new AlertDialog.Builder(getContext());
                 b.setItems(choices, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DartsDBHelper db = DartsDBHelper.getInstance(getContext());
-                        db.removePlayer(id);
-                        remove(getItem(pos));
-                        notifyDataSetChanged();
+                        if(which == 0) {
+                            DartsDBHelper db = DartsDBHelper.getInstance(getContext());
+                            db.removePlayer(id);
+                            remove(getItem(pos));
+                            notifyDataSetChanged();
+                        }else if(which == 1){
+                            Intent intent = new Intent(getContext(), ProfileActivity.class);
+                            intent.putExtra("player", player);
+                            getContext().startActivity(intent);
+                        }
                     }
                 });
                 b.show();

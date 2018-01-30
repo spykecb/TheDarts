@@ -14,7 +14,6 @@ import java.util.Map;
 public class Shot implements Serializable{
     private Player player;
     private List<Throw> throwList;
-    private int roundNumber;
 
     public Shot(){
 
@@ -22,10 +21,6 @@ public class Shot implements Serializable{
 
     public Shot(List<Throw> throwList, int roundNumber){
         this.throwList = throwList;
-        this.roundNumber = roundNumber;
-        if(throwList.size()>0) {
-            this.player = throwList.get(0).getPlayer();
-        }
     }
 
     public List<Throw> getThrowList() {
@@ -40,11 +35,9 @@ public class Shot implements Serializable{
     }
 
     public int getRoundNumber() {
-        return roundNumber;
-    }
 
-    public void setRoundNumber(int roundNumber) {
-        this.roundNumber = roundNumber;
+        if(throwList.size() > 0) return throwList.get(0).getRoundNumber();
+        return 0;
     }
 
     public void setPlayer(Player player ){
@@ -52,13 +45,6 @@ public class Shot implements Serializable{
     }
 
     public Player getPlayer() {
-        if(player == null){
-            if(throwList.size() > 0)
-                return throwList.get(0).getPlayer();
-            else
-                return null;
-        }
-
         return player;
     }
 

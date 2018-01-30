@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import hu.spykeh.darts.thedarts.model.CricketMatch;
 import hu.spykeh.darts.thedarts.model.Match;
@@ -29,6 +28,8 @@ public class DartsDBHelper extends SQLiteOpenHelper{
     private static final String PLAYERS_TABLE_NAME = "players";
     private static final String PLAYERS_COLUMN_ID = "id";
     private static final String PLAYERS_COLUMN_NAME = "name";
+    private static final String PLAYERS_COLUMN_QRCODEID = "qrCodeId";
+
     private static final String MATCHES_TABLE_NAME = "matches";
     private static final String MATCHES_COLUMN_ID = "id";
     private static final String MATCHES_COLUMN_TYPE = "type";
@@ -45,14 +46,15 @@ public class DartsDBHelper extends SQLiteOpenHelper{
 
 
     public DartsDBHelper(Context context){
-        super(context, DATABASE_NAME, null, 6);
+        super(context, DATABASE_NAME, null, 9);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE " + PLAYERS_TABLE_NAME + "(" +
                 PLAYERS_COLUMN_ID + " integer PRIMARY KEY, " +
-                PLAYERS_COLUMN_NAME + " text " +
+                PLAYERS_COLUMN_NAME + " text, " +
+                PLAYERS_COLUMN_QRCODEID + " text" +
                 ")";
         db.execSQL(sql);
         sql = "CREATE TABLE " + MATCHES_TABLE_NAME + "(" +
@@ -83,9 +85,11 @@ public class DartsDBHelper extends SQLiteOpenHelper{
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + THROWS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MATCH_PLAYERS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + PLAYERS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MATCHES_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + THROWS_TABLE_NAME);
+
         onCreate(db);
     }
 
@@ -93,6 +97,8 @@ public class DartsDBHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(PLAYERS_COLUMN_NAME, player.getName());
+        String qrCodeId = player.getQrcodeid();
+        cv.put(PLAYERS_COLUMN_QRCODEID, qrCodeId);
         db.insert(PLAYERS_TABLE_NAME, null, cv);
     }
 
@@ -111,8 +117,10 @@ public class DartsDBHelper extends SQLiteOpenHelper{
         while(!cursor.isAfterLast()){
             int id = cursor.getInt(cursor.getColumnIndex(PLAYERS_COLUMN_ID));
             String name = cursor.getString(cursor.getColumnIndex(PLAYERS_COLUMN_NAME));
+            String qrCodeId = cursor.getString(cursor.getColumnIndex(PLAYERS_COLUMN_QRCODEID));
             player = new Player(name);
             player.setId(id);
+            player.setQrcodeid(qrCodeId);
             cursor.moveToNext();
         }
         cursor.close();
@@ -129,8 +137,10 @@ public class DartsDBHelper extends SQLiteOpenHelper{
         while(!cursor.isAfterLast()){
             int id = cursor.getInt(cursor.getColumnIndex(PLAYERS_COLUMN_ID));
             String name = cursor.getString(cursor.getColumnIndex(PLAYERS_COLUMN_NAME));
+            String qrCodeId = cursor.getString(cursor.getColumnIndex(PLAYERS_COLUMN_QRCODEID));
             Player player = new Player(name);
             player.setId(id);
+            player.setQrcodeid(qrCodeId);
             players.add(player);
             cursor.moveToNext();
         }
@@ -170,14 +180,12 @@ public class DartsDBHelper extends SQLiteOpenHelper{
                 match.addPlayer(p);
                 match.movePlayerToTeam(p, pTeam == 0 ? Team.TeamColor.RED : Team.TeamColor.BLUE);
                 match.setId(id);
+
                 matches.add(match);
             }
             cursor.moveToNext();
         }
         cursor.close();
-        for(Match m : matches){
-            m.setShots(getShotsOfMatch(m.getId()));
-        }
 
         return matches;
     }
@@ -195,6 +203,7 @@ public class DartsDBHelper extends SQLiteOpenHelper{
             int score = cursor.getInt(cursor.getColumnIndex(THROWS_COLUMN_SCORE));
             Player p = getPlayer(playerId);
             Throw th = new Throw(p, score);
+            th.setRoundNumber(round);
             boolean isCreated = false;
             for(Shot s: shots){
                 if(s.getRoundNumber() == round){
@@ -205,7 +214,6 @@ public class DartsDBHelper extends SQLiteOpenHelper{
             }
             if(!isCreated){
                 Shot shot = new Shot();
-                shot.setRoundNumber(round);
                 shot.getThrowList().add(th);
                 shot.setPlayer(th.getPlayer());
                 shots.add(shot);
@@ -229,12 +237,13 @@ public class DartsDBHelper extends SQLiteOpenHelper{
         Log.d("myTag", "inserted Match record (id:" + matchId + " )");
         for(Player p : match.getPlayers()) {
             insertMatchPlayer(match, p);
-        }
-        for(Shot s : match.getShots()){
-            for(Throw t: s.getThrowList()){
-                insertThrow(t, matchId, s.getRoundNumber());
+            for(Shot s : p.getShots()){
+                for(Throw t: s.getThrowList()){
+                    insertThrow(t, matchId, s.getRoundNumber());
+                }
             }
         }
+
     }
 
     public void insertMatchPlayer(Match match, Player p ){

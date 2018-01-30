@@ -1,9 +1,11 @@
 package hu.spykeh.darts.thedarts.view;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +16,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 
 import hu.spykeh.darts.thedarts.R;
@@ -23,10 +30,12 @@ import hu.spykeh.darts.thedarts.adapters.ShotAdapter;
 import hu.spykeh.darts.thedarts.db.DartsDBHelper;
 import hu.spykeh.darts.thedarts.model.CricketMatch;
 import hu.spykeh.darts.thedarts.model.CricketMatchSettings;
+import hu.spykeh.darts.thedarts.model.DTO.MatchDTO;
 import hu.spykeh.darts.thedarts.model.Player;
 import hu.spykeh.darts.thedarts.model.Shot;
 import hu.spykeh.darts.thedarts.model.Team;
 import hu.spykeh.darts.thedarts.model.Throw;
+import hu.spykeh.darts.thedarts.webapi.WebApiAccess;
 
 public class CricketMatchActivity extends AppCompatActivity {
 
@@ -106,13 +115,43 @@ public class CricketMatchActivity extends AppCompatActivity {
         return true;
     }
 
+    private void endMatch(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle("Match ended");
+        DartsDBHelper db = DartsDBHelper.getInstance(this);
+        db.insertMatch(match);
+        new GetPlayerTask().execute();
+        b.setMessage("Winner: " + match.getWinner().toString());
+        b.show();
+    }
+
+    private class GetPlayerTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                final String url = WebApiAccess.endPoint + "match";
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                MatchDTO matchDTO = new MatchDTO(match);
+                Gson gson = new Gson();
+                String json = gson.toJson(matchDTO);
+                Log.d("tag", json);
+                restTemplate.put(url,matchDTO );
+            } catch (Exception e) {
+                Log.e("MainActivity", e.getMessage(), e);
+            }
+
+            return null;
+        }
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int res_id = item.getItemId();
         if(res_id == R.id.nextRoundButton){
             Shot shot = new Shot(new ArrayList<>(currentRoundThrows), match.getRoundNumber());
-            shot.setPlayer(match.getPlayerTothrow());
-            match.addShot(shot);
+            match.addShot(match.getPlayerTothrow(), shot);
             scrollListViewToBottom(shotHistoryR);
             scrollListViewToBottom(shotHistoryB);
 
@@ -120,12 +159,7 @@ public class CricketMatchActivity extends AppCompatActivity {
             Toast.makeText(this, match.getPlayerTothrow().getName() + " to throw!", Toast.LENGTH_SHORT).show();
             currentRoundThrows.clear();
             if(match.getWinner() != null){
-                AlertDialog.Builder b = new AlertDialog.Builder(this);
-                b.setTitle("Match ended");
-                DartsDBHelper db = DartsDBHelper.getInstance(this);
-                db.insertMatch(match);
-                b.setMessage("Winner: " + match.getWinner().toString());
-                b.show();
+               endMatch();
             }
 
             updateViews();

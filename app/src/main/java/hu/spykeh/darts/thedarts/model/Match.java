@@ -3,11 +3,15 @@ package hu.spykeh.darts.thedarts.model;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+import hu.spykeh.darts.thedarts.model.DTO.ThrowDTO;
 
 /**
  * Created by spykeh on 2017. 10. 22..
@@ -17,7 +21,8 @@ public class Match implements Serializable{
     private int id;
     protected ArrayList<Player> players;
     protected ArrayList<Team> teams;
-    protected ArrayList<Shot> shots;
+
+    @JsonIgnore
     protected MatchSettings settings;
 
     public Match(MatchSettings settings, ArrayList<Player> players) {
@@ -48,7 +53,7 @@ public class Match implements Serializable{
         teams = new ArrayList<>();
         teams.add(team1);
         teams.add(team2);
-        shots = new ArrayList<>();
+
 
     }
 
@@ -69,20 +74,7 @@ public class Match implements Serializable{
         }
     }
 
-    public void addShot(Shot shot){
-        if(this.shots == null){
-            this.shots = new ArrayList<>();
-        }
-        this.shots.add(shot);
-    }
 
-    public ArrayList<Shot> getShots() {
-        return shots;
-    }
-
-    public void setShots(ArrayList<Shot> shots) {
-        this.shots = shots;
-    }
 
     public MatchSettings getSettings() {
         return settings;
@@ -139,12 +131,14 @@ public class Match implements Serializable{
 
     public ArrayList<Shot> getShotsOfTeam(Team.TeamColor color){
         ArrayList<Shot> shots = new ArrayList<>();
-        if(getShots() == null){
-            return shots;
-        }
-        for(Shot s: getShots()){
-            if(getTeamOfPlayer(s.getPlayer()).getColor() == color){
-                shots.add(s);
+        for(Player p : getPlayersOfTeam(color)){
+            if(p.getShots() == null){
+                return shots;
+            }
+            for(Shot s: p.getShots()){
+                if(getTeamOfPlayer(s.getPlayer()).getColor() == color){
+                    shots.add(s);
+                }
             }
         }
         return shots;

@@ -113,4 +113,9 @@ public class CricketSectionAdapter extends ArrayAdapter<CricketSectionStatus> {
 
         return sectionView;
     }
+
+    @Override
+    public boolean isEnabled(int position){
+        return false;
+    }
 }

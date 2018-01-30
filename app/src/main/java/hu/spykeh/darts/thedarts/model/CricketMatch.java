@@ -2,13 +2,12 @@ package hu.spykeh.darts.thedarts.model;
 
 import android.util.Log;
 
-import java.lang.reflect.Array;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by spykeh on 2017. 10. 22..
@@ -16,12 +15,18 @@ import java.util.List;
 
 public class CricketMatch extends Match {
 
+    @JsonIgnore
     private Team teamToThrow;
+    @JsonIgnore
     private Player playerTothrow;
+    @JsonIgnore
     private int roundNumber;
 
+
     private int shotNum;
+    @JsonIgnore
     private ArrayList<CricketSectionStatus> scoreBoard;
+    @JsonIgnore
     private HashMap<Integer, ArrayList<CricketSectionStatus>> sbHistory;
 
     public CricketMatch(CricketMatchSettings settings, ArrayList<Player> players){
@@ -43,6 +48,10 @@ public class CricketMatch extends Match {
         roundNumber = 0;
     }
 
+    public int getType(){
+        return 1;
+    }
+
     private ArrayList<CricketSectionStatus> copyBoard(ArrayList<CricketSectionStatus> src){
         ArrayList<CricketSectionStatus> dst = new ArrayList<>();
         for(CricketSectionStatus stat : src){
@@ -52,8 +61,13 @@ public class CricketMatch extends Match {
     }
 
     public int getTeamScore(Team.TeamColor color){
-        ArrayList<Shot> shots = getShots();
-        if(shots == null || shots.size() == 0){
+        ArrayList<Shot> shots = new ArrayList<>();
+        for(Player p : getPlayersOfTeam(color)) {
+            if(p.getShots() != null) {
+                shots.addAll(p.getShots());
+            }
+        }
+        if(shots.size() == 0){
             return 0;
         }
         Collections.sort(shots, new Comparator<Shot>() {
@@ -129,9 +143,10 @@ public class CricketMatch extends Match {
         if(shotNum > 0){
             scoreBoard = copyBoard(sbHistory.get(shotNum - 1));
             sbHistory.remove(sbHistory.get(shotNum));
-            shots.remove(shots.size() - 1);
-            shotNum--;
             pickPrevPlayerToThrow();
+            playerTothrow.getShots().remove(playerTothrow.getShots().size() - 1);
+            shotNum--;
+
         }
     }
 
@@ -178,15 +193,11 @@ public class CricketMatch extends Match {
         sbHistory.put(round, copyBoard(sb));
     }
 
-    public void addShot(Shot shot){
-        if(this.shots == null){
-            this.shots = new ArrayList<>();
-        }
-        this.shots.add(shot);
+    public void addShot(Player p, Shot shot){
+        p.addShot(shot);
         for(int i = 0; i <this.scoreBoard.size() ; i++){
             this.scoreBoard.get(i).setCurRoundThrowCount(0);
         }
-        updatePlayerMPR(shot.getPlayer());
         addSbToSbHistory(++shotNum, scoreBoard);
     }
 
@@ -210,21 +221,6 @@ public class CricketMatch extends Match {
             teamToThrow = getTeams().get(0);
             playerTothrow = teamToThrow.getPlayers().get(roundNumber % teamToThrow.getPlayers().size());
         }
-    }
-
-    public void updatePlayerMPR(Player p){
-        int marks = 0;
-        int q = 0;
-        for(Shot s : shots){
-            if(s.getPlayer().getId() == p.getId()){
-                marks += s.getMarkCount();
-                q++;
-            }
-        }
-        if(q > 0)
-            p.setMpr((float)marks / (float)q);
-        else
-            p.setMpr(0);
     }
 
     public Player getPlayerTothrow() {

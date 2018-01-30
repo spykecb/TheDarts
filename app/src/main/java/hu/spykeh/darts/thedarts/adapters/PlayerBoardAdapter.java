@@ -52,8 +52,10 @@ public class PlayerBoardAdapter extends ArrayAdapter<Player> {
         return pView;
     }
 
-    public boolean isAlignRight() {
-        return isAlignRight;
+    @Override
+    public boolean isEnabled(int position){
+        return false;
     }
+
 }
 
