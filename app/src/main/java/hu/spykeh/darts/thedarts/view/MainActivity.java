@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onStatisticsButtonClick(View v){
+        /*
         DartsDBHelper db = DartsDBHelper.getInstance(this);
         for(Player p : db.getAllPlayers()){
             for(Match m : db.getMatchesOfPlayer(p.getId())){
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra("player", loggedInPlayer);
         startActivity(intent);
+        */
+
+        Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show();
 
     }
 
