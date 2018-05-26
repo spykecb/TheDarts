@@ -40,6 +40,7 @@ public class CricketMatch extends Match {
         sections.add(18);
         sections.add(17);
         sections.add(16);
+        sections.add(15);
         addSections(sections);
         scoreBoard.add(new CricketSectionStatus(25, 0, 0));
         addSbToSbHistory(0, copyBoard(scoreBoard));
