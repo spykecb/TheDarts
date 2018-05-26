@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -141,6 +142,11 @@ public class Match implements Serializable{
                 }
             }
         }
+        Collections.sort(shots, new Comparator<Shot>() {
+            public int compare(Shot s1, Shot s2){
+                return Integer.valueOf(s1.getRoundNumber()).compareTo(Integer.valueOf(s2.getRoundNumber()));
+            }
+        });
         return shots;
     }
 

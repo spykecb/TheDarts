@@ -1,28 +1,18 @@
 package hu.spykeh.darts.thedarts.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import hu.spykeh.darts.thedarts.R;
-import hu.spykeh.darts.thedarts.db.DartsDBHelper;
+import hu.spykeh.darts.thedarts.listeners.OnSwipeTouchListener;
 import hu.spykeh.darts.thedarts.model.CricketSectionStatus;
 import hu.spykeh.darts.thedarts.model.Team;
 import hu.spykeh.darts.thedarts.view.CricketMatchActivity;
@@ -57,13 +47,28 @@ public class CricketSectionAdapter extends ArrayAdapter<CricketSectionStatus> {
         }else{
             ((TextView) sectionButton.findViewById(R.id.sectionHitCountText)).setText("");
         }
-        sectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((CricketMatchActivity)getContext()).onThrowClick(v, sectionStatus.getSection());
+
+        sectionButton.setOnTouchListener(new OnSwipeTouchListener(getContext()){
+            public void onSwipeRight(){
+                int amt = 3;
+                if(sectionStatus.getSection() == 25){
+                    amt = 2;
+                }
+                ((CricketMatchActivity)getContext()).onThrowClick(sectionStatus.getSection(), amt);
+                sectionStatus.setCurRoundThrowCount(sectionStatus.getCurRoundThrowCount() + amt);
+            }
+
+            public void onSwipeLeft(){
+                ((CricketMatchActivity)getContext()).onThrowClick(sectionStatus.getSection(), 2);
+                sectionStatus.setCurRoundThrowCount(sectionStatus.getCurRoundThrowCount() + 2);
+            }
+
+            public void onSingleTap(){
+                ((CricketMatchActivity)getContext()).onThrowClick(sectionStatus.getSection(), 1);
                 sectionStatus.setCurRoundThrowCount(sectionStatus.getCurRoundThrowCount() + 1);
             }
         });
+
         if(sectionStatus.getScore1() >= 3 && sectionStatus.getScore2() >=3){
             sectionButton.setEnabled(false);
             sectionButton.setAlpha(0.4f);

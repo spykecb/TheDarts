@@ -114,17 +114,17 @@ public class CricketMatch extends Match {
         return new CricketSectionStatus(section, 0, 0);
     }
 
-    public void hitSection(int section){
+    public void hitSection(int section, int amount){
         for(CricketSectionStatus secStat : scoreBoard){
             if(secStat.getSection() == section){
                 if(getStatusOfSection(section).getScore1() >= 3 && getStatusOfSection(section).getScore2() >= 3){
                     continue;
                 }
                 if(teamToThrow.getColor() == Team.TeamColor.RED) {
-                    secStat.setScore1(secStat.getScore1() + 1);
+                    secStat.setScore1(secStat.getScore1() + amount);
                     Log.d("myTag", section + " increased to " + secStat.getScore1());
                 }else if (teamToThrow.getColor() == Team.TeamColor.BLUE){
-                    secStat.setScore2(secStat.getScore2() + 1);
+                    secStat.setScore2(secStat.getScore2() + amount);
                     Log.d("myTag", section + " increased to " + secStat.getScore2());
                 }
             }

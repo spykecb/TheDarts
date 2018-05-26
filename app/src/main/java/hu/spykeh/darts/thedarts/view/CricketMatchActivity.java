@@ -9,10 +9,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,13 +95,12 @@ public class CricketMatchActivity extends AppCompatActivity {
 
     }
 
-    public void onThrowClick(View v, int section){
-        Player playerToThrow = match.getPlayerTothrow();
-        Throw _throw = new Throw(playerToThrow, section);
-        getMatch().hitSection(section);
-
-        updateMarkViews();
-        if(currentRoundThrows.size() < 9) {
+    public void onThrowClick(int section, int amount){
+        if(currentRoundThrows.size() < 3) {
+            Player playerToThrow = match.getPlayerTothrow();
+            Throw _throw = new Throw(playerToThrow, section, amount);
+            getMatch().hitSection(section, amount);
+            updateMarkViews();
             currentRoundThrows.add(_throw);
         }
     }
@@ -133,6 +130,7 @@ public class CricketMatchActivity extends AppCompatActivity {
                 RestTemplate restTemplate = new RestTemplate();
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
                 MatchDTO matchDTO = new MatchDTO(match);
+                matchDTO.setId(0);
                 Gson gson = new Gson();
                 String json = gson.toJson(matchDTO);
                 Log.d("tag", json);

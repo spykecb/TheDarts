@@ -15,6 +15,11 @@ public class Throw implements Serializable{
         this.player = player;
         this.score = score;
     }
+    public Throw(Player player, int score, int multiplier){
+        this.player = player;
+        this.score = score;
+        this.multiplier = multiplier;
+    }
 
     public Player getPlayer() {
         return player;
@@ -44,4 +49,11 @@ public class Throw implements Serializable{
         this.roundNumber = roundNumber;
     }
 
+    public int getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
+    }
 }
