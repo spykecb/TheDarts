@@ -106,7 +106,7 @@ public class MatchSettingsActivity extends AppCompatActivity {
             }else if(gameTypeSpinner.getSelectedItem().toString().equals("Random cricket II")){
                 Random r = new Random();
                 List<Integer> sections = new ArrayList<>();
-                int section = r.nextInt(20) + 6;
+                int section = r.nextInt(15) + 6;
                 for(int i = section; i >= section - 6; i--){
                     sections.add(i);
                 }

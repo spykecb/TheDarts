@@ -64,8 +64,8 @@ public class Shot implements Serializable{
     public int getMarkCount(){
         int count = 0;
         for(Throw t : getThrowList()){
-            if(t.getScore() >= 15){
-                count++;
+            if(t.getScore() >= 1){
+                count += t.getMultiplier();
             }
         }
         return count;
