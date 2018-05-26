@@ -16,11 +16,19 @@
         android:onClick="onStartMatchClick"
         android:text="START MATCH" />
 
+    <Spinner
+        android:id="@+id/gameTypeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
     <ListView
         android:id="@+id/playerList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp"
+        android:layout_below="@id/gameTypeSpinner"
         android:layout_above="@+id/button_startMatch" />
 </RelativeLayout>

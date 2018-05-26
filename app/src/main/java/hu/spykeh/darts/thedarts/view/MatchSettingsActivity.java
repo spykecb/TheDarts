@@ -12,11 +12,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -28,11 +29,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import hu.spykeh.darts.thedarts.R;
@@ -53,25 +56,70 @@ public class MatchSettingsActivity extends AppCompatActivity {
     private ArrayList<Player> players;
     DartsDBHelper dbHelper;
     private ListView playerListView;
+    private Spinner gameTypeSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_settings);
         playerListView = (ListView)findViewById(R.id.playerList);
+        gameTypeSpinner = (Spinner)findViewById(R.id.gameTypeSpinner);
         dbHelper = DartsDBHelper.getInstance(this);
         players = dbHelper.getAllPlayers();
         PlayerSelectionAdapter la = new PlayerSelectionAdapter(this, players);
         playerListView.setAdapter(la);
+        List<String> gameTypes = new ArrayList<>();
+        gameTypes.add("Cricket");
+        gameTypes.add("Random cricket");
+        gameTypes.add("Random cricket II");
+        ArrayAdapter<String> gameTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, gameTypes);
+        gameTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        gameTypeSpinner.setAdapter(gameTypeAdapter);
 
     }
 
     public void onStartMatchClick(View v){
         ArrayList<Player> selPlayers = ((PlayerSelectionAdapter)playerListView.getAdapter()).getSelectedPlayers();
+
         if(selPlayers != null && selPlayers.size() >= 2) {
             Intent intent = new Intent(this, CricketMatchActivity.class);
             CricketMatch match = new CricketMatch(new CricketMatchSettings(), selPlayers);
-            match.initBoard();
+            if(gameTypeSpinner.getSelectedItem().toString().equals("Random cricket")){
+                Random r = new Random();
+                List<Integer> sections = new ArrayList<>();
+                for(int i = 0; i < 6; i++){
+                    int section = r.nextInt(20) + 1;
+                    while(sections.contains(section)){
+                        section = r.nextInt(20) + 1;
+                    }
+
+                    sections.add(section);
+                }
+                Collections.sort(sections, new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer lhs, Integer rhs) {
+                        return rhs.compareTo(lhs);
+                    }
+                });
+                match.initBoard(sections);
+            }else if(gameTypeSpinner.getSelectedItem().toString().equals("Random cricket II")){
+                Random r = new Random();
+                List<Integer> sections = new ArrayList<>();
+                int section = r.nextInt(20) + 6;
+                for(int i = section; i >= section - 6; i--){
+                    sections.add(i);
+                }
+                Collections.sort(sections, new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer lhs, Integer rhs) {
+                        return rhs.compareTo(lhs);
+                    }
+                });
+                match.initBoard(sections);
+            }else{
+                match.initBoard();
+            }
             intent.putExtra("match", match);
             startActivity(intent);
         }else{

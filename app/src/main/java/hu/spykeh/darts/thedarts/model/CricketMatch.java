@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by spykeh on 2017. 10. 22..
@@ -21,8 +22,6 @@ public class CricketMatch extends Match {
     private Player playerTothrow;
     @JsonIgnore
     private int roundNumber;
-
-
     private int shotNum;
     @JsonIgnore
     private ArrayList<CricketSectionStatus> scoreBoard;
@@ -35,17 +34,34 @@ public class CricketMatch extends Match {
 
     public void initBoard(){
         scoreBoard = new ArrayList<>();
-        scoreBoard.add(new CricketSectionStatus(20, 0, 0));
-        scoreBoard.add(new CricketSectionStatus(19, 0, 0));
-        scoreBoard.add(new CricketSectionStatus(18, 0, 0));
-        scoreBoard.add(new CricketSectionStatus(17, 0, 0));
-        scoreBoard.add(new CricketSectionStatus(16, 0, 0));
-        scoreBoard.add(new CricketSectionStatus(15, 0, 0));
+        List<Integer> sections = new ArrayList<>();
+        sections.add(20);
+        sections.add(19);
+        sections.add(18);
+        sections.add(17);
+        sections.add(16);
+        addSections(sections);
         scoreBoard.add(new CricketSectionStatus(25, 0, 0));
         addSbToSbHistory(0, copyBoard(scoreBoard));
         teamToThrow = getTeams().get(0);
         playerTothrow = teamToThrow.getPlayers().get(0);
         roundNumber = 0;
+    }
+
+    public void initBoard(List<Integer> sections){
+        scoreBoard = new ArrayList<>();
+        addSections(sections);
+        scoreBoard.add(new CricketSectionStatus(25, 0, 0));
+        addSbToSbHistory(0, copyBoard(scoreBoard));
+        teamToThrow = getTeams().get(0);
+        playerTothrow = teamToThrow.getPlayers().get(0);
+        roundNumber = 0;
+    }
+
+    private void addSections(List<Integer> sections){
+        for (int i = 0; i < 6; i++) {
+            scoreBoard.add(new CricketSectionStatus(sections.get(i), 0, 0));
+        }
     }
 
     public int getType(){
