@@ -149,6 +149,11 @@ public class CricketMatchActivity extends AppCompatActivity {
         int res_id = item.getItemId();
         if(res_id == R.id.nextRoundButton){
             Shot shot = new Shot(new ArrayList<>(currentRoundThrows), match.getRoundNumber());
+            if(shot.getScore() >= 100 && shot.getScore() < 180) {
+                Toast.makeText(this, shot.getScore() + "!", Toast.LENGTH_LONG).show();
+            }else if(shot.getScore() == 180){
+                Toast.makeText(this, "ONE HUNDRED AND EIGHTY !!!", Toast.LENGTH_LONG).show();
+            }
             match.addShot(match.getPlayerTothrow(), shot);
             scrollListViewToBottom(shotHistoryR);
             scrollListViewToBottom(shotHistoryB);

@@ -56,7 +56,7 @@ public class Shot implements Serializable{
     public int getScore(){
         int score = 0;
         for(Throw t: getThrowList()){
-            score += t.getScore();
+            score += t.getScore()* t.getMultiplier();
         }
         return score;
     }

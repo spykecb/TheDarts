@@ -43,13 +43,9 @@ import hu.spykeh.darts.thedarts.adapters.PlayerSelectionAdapter;
 import hu.spykeh.darts.thedarts.db.DartsDBHelper;
 import hu.spykeh.darts.thedarts.model.CricketMatch;
 import hu.spykeh.darts.thedarts.model.CricketMatchSettings;
-import hu.spykeh.darts.thedarts.model.DTO.MatchDTO;
 import hu.spykeh.darts.thedarts.model.DTO.PlayerDTO;
-import hu.spykeh.darts.thedarts.model.MatchSettings;
 import hu.spykeh.darts.thedarts.model.Player;
 import hu.spykeh.darts.thedarts.webapi.WebApiAccess;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class MatchSettingsActivity extends AppCompatActivity {
 
