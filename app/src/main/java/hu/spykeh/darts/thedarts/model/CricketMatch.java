@@ -32,6 +32,10 @@ public class CricketMatch extends Match {
         super(settings, players);
     }
 
+    public CricketMatch(CricketMatchSettings settings, Team team1, Team team2){
+        super(settings, team1, team2);
+    }
+
     public void initBoard(){
         scoreBoard = new ArrayList<>();
         List<Integer> sections = new ArrayList<>();

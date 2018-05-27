@@ -45,6 +45,7 @@ import hu.spykeh.darts.thedarts.model.CricketMatch;
 import hu.spykeh.darts.thedarts.model.CricketMatchSettings;
 import hu.spykeh.darts.thedarts.model.DTO.PlayerDTO;
 import hu.spykeh.darts.thedarts.model.Player;
+import hu.spykeh.darts.thedarts.model.Team;
 import hu.spykeh.darts.thedarts.webapi.WebApiAccess;
 
 public class MatchSettingsActivity extends AppCompatActivity {
@@ -75,12 +76,28 @@ public class MatchSettingsActivity extends AppCompatActivity {
 
     }
 
-    public void onStartMatchClick(View v){
-        ArrayList<Player> selPlayers = ((PlayerSelectionAdapter)playerListView.getAdapter()).getSelectedPlayers();
+    private class Teams{
+        Team t1;
+        Team t2;
 
-        if(selPlayers != null && selPlayers.size() >= 2) {
+        Teams(Team t1, Team t2){
+            this.t1 = t1;
+            this.t2 = t2;
+        }
+    }
+
+    public void onStartMatchClick(View v){
+        PlayerSelectionAdapter psa = ((PlayerSelectionAdapter)playerListView.getAdapter());
+        ArrayList<Player> selANYPlayers = psa.getSelectedANYPlayers();
+        ArrayList<Player> selTEAM1Players = psa.getSelectedTEAM1Players();
+        ArrayList<Player> selTEAM2Players = psa.getSelectedTEAM2Players();
+        Teams teams = createTeams(selANYPlayers, selTEAM1Players, selTEAM2Players);
+
+        int size = teams.t1.getPlayers().size() + teams.t2.getPlayers().size();
+
+        if(size >= 2 && teams.t1.getPlayers().size() > 0 && teams.t2.getPlayers().size() > 0) {
             Intent intent = new Intent(this, CricketMatchActivity.class);
-            CricketMatch match = new CricketMatch(new CricketMatchSettings(), selPlayers);
+            CricketMatch match = new CricketMatch(new CricketMatchSettings(), teams.t1, teams.t2);
             if(gameTypeSpinner.getSelectedItem().toString().equals("Random cricket")){
                 Random r = new Random();
                 List<Integer> sections = new ArrayList<>();
@@ -123,6 +140,29 @@ public class MatchSettingsActivity extends AppCompatActivity {
         }
     }
 
+    private Teams createTeams(ArrayList<Player> selANYPlayers, ArrayList<Player> selTEAM1Players, ArrayList<Player> selTEAM2Players){
+        Collections.shuffle(selANYPlayers, new Random(System.nanoTime()));
+        Collections.shuffle(selTEAM1Players, new Random(System.nanoTime()));
+        Collections.shuffle(selTEAM2Players, new Random(System.nanoTime()));
+        Team t1 = new Team(Team.TeamColor.RED);
+        Team t2 = new Team(Team.TeamColor.BLUE);
+        for(int i = 0; i < selTEAM1Players.size() ; i++){
+            t1.addPlayer(selTEAM1Players.get(i));
+        }
+        for(int i = 0; i < selTEAM2Players.size() ; i++){
+            t2.addPlayer(selTEAM2Players.get(i));
+        }
+        for(int i = 0; i < selANYPlayers.size(); i++){
+            if(t1.getPlayers().size() > t2.getPlayers().size()){
+                t2.addPlayer(selANYPlayers.get(i));
+            }else{
+                t1.addPlayer(selANYPlayers.get(i));
+            }
+        }
+        Teams teams = new Teams(t1,t2);
+        return teams;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inf = getMenuInflater();
@@ -145,7 +185,11 @@ public class MatchSettingsActivity extends AppCompatActivity {
                     p.setQrcodeid(UUID.randomUUID().toString());
                     dbHelper.insertPlayer(p);
                     players.add(p);
-                    new AddPlayerTask().execute(p);
+                    try {
+                        new AddPlayerTask().execute(p);
+                    }catch (Exception e){
+                        Log.e("MainActivity", e.getMessage(), e);
+                    }
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

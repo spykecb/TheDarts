@@ -20,6 +20,11 @@ public class Team implements Serializable{
 
     public Team(TeamColor color){
         this.color = color;
+        this.players = new ArrayList<>();
+    }
+    public Team(List<Player> players, TeamColor color)  {
+        this.color = color;
+        this.players = players;
     }
 
     public TeamColor getColor() {

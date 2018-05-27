@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckedTextView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import hu.spykeh.darts.thedarts.R;
 import hu.spykeh.darts.thedarts.db.DartsDBHelper;
 import hu.spykeh.darts.thedarts.model.Player;
 import hu.spykeh.darts.thedarts.view.ProfileActivity;
@@ -21,42 +24,86 @@ import hu.spykeh.darts.thedarts.view.ProfileActivity;
  */
 
 public class PlayerSelectionAdapter extends ArrayAdapter<Player> {
-    private ArrayList<Player> selectedPlayers;
+    private ArrayList<Player> selectedANYPlayers;
+    private ArrayList<Player> selectedTEAM1Players;
+    private ArrayList<Player> selectedTEAM2Players;
 
     public PlayerSelectionAdapter(Context context, ArrayList<Player> players){
-        super(context, android.R.layout.simple_list_item_multiple_choice, players);
+        super(context, R.layout.player_select_element, players);
+        selectedANYPlayers = new ArrayList<>();
+        selectedTEAM1Players = new ArrayList<>();
+        selectedTEAM2Players = new ArrayList<>();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        View sectionView = inflater.inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
-        final CheckedTextView cview = (CheckedTextView) sectionView.findViewById(android.R.id.text1);
+        View pSelectView = inflater.inflate(R.layout.player_select_element, parent, false);
+        final TextView pName = (TextView) pSelectView.findViewById(R.id.selectionPlayerName);
+        final CheckBox t1CB = (CheckBox) pSelectView.findViewById(R.id.team1CheckBox);
+        final CheckBox t2CB = (CheckBox) pSelectView.findViewById(R.id.team2CheckBox);
+        final CheckBox anyCB = (CheckBox) pSelectView.findViewById(R.id.anyCheckBox);
         final Player player = getItem(position);
-        cview.setText(player.getName());
+        pName.setText(player.getName());
+        t1CB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    t2CB.setChecked(false);
+                    anyCB.setChecked(false);
+                    removePlayerFromSelection(player);
+                    selectedTEAM1Players.add(player);
+                }else{
+                    selectedTEAM1Players.remove(player);
+                }
+            }
+        });
+        t2CB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    t1CB.setChecked(false);
+                    anyCB.setChecked(false);
+                    removePlayerFromSelection(player);
+                    selectedTEAM2Players.add(player);
+                }
+                else{
+                    selectedTEAM2Players.remove(player);
+                }
+            }
+        });
+        anyCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    t1CB.setChecked(false);
+                    t2CB.setChecked(false);
+                    removePlayerFromSelection(player);
+                    selectedANYPlayers.add(player);
+                }else{
+                    selectedANYPlayers.remove(player);
+                }
+            }
+        });
 
-        cview.setOnClickListener(new View.OnClickListener() {
+        pSelectView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!cview.isChecked()) {
-                    cview.setChecked(true);
-                    if (selectedPlayers == null) {
-                        selectedPlayers = new ArrayList<Player>();
+                if(!anyCB.isChecked()) {
+                    anyCB.setChecked(true);
+                    if(selectedANYPlayers.contains(player)) {
+                        selectedANYPlayers.add(player);
                     }
-                    selectedPlayers.add(player);
-                }else{
-                    cview.setChecked(false);
-                    if (selectedPlayers == null) {
-                        selectedPlayers = new ArrayList<Player>();
-                    }
-                    selectedPlayers.remove(player);
+                }else if(anyCB.isChecked()){
+                    anyCB.setChecked(false);
+                    removePlayerFromSelection(player);
                 }
 
             }
         });
 
         final int pos = position;
-        cview.setOnLongClickListener(new View.OnLongClickListener() {
+        pSelectView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 final int id = player.getId();
@@ -81,11 +128,24 @@ public class PlayerSelectionAdapter extends ArrayAdapter<Player> {
                 return true;
             }
         });
-        return cview;
+        return pSelectView;
     }
 
-    public ArrayList<Player> getSelectedPlayers() {
-        return selectedPlayers;
+    private void removePlayerFromSelection(Player player){
+        selectedANYPlayers.remove(player);
+        selectedTEAM1Players.remove(player);
+        selectedTEAM2Players.remove(player);
     }
 
+    public ArrayList<Player> getSelectedANYPlayers() {
+        return selectedANYPlayers;
+    }
+
+    public ArrayList<Player> getSelectedTEAM1Players() {
+        return selectedTEAM1Players;
+    }
+
+    public ArrayList<Player> getSelectedTEAM2Players() {
+        return selectedTEAM2Players;
+    }
 }

@@ -54,8 +54,27 @@ public class Match implements Serializable{
         teams = new ArrayList<>();
         teams.add(team1);
         teams.add(team2);
+    }
 
-
+    public Match(MatchSettings settings, Team team1, Team team2) {
+        this.settings = settings;
+        team1.setColor(Team.TeamColor.RED);
+        team2.setColor(Team.TeamColor.BLUE);
+        String playerList = "";
+        players = new ArrayList<>();
+        players.addAll(team1.getPlayers());
+        players.addAll(team2.getPlayers());
+        setPlayers(players);
+        if(players.size() >= 2) {
+            for (int i = 0; i < players.size(); i++) {
+                playerList += players.get(i).getName() + ", ";
+            }
+            playerList = playerList.substring(0, playerList.length() - 2);
+            Log.d("myTag", "Match started with players: " + playerList);
+        }
+        teams = new ArrayList<>();
+        teams.add(team1);
+        teams.add(team2);
     }
 
     public void addPlayer(Player p ){
